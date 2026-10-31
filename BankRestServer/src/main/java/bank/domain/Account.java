@@ -40,10 +40,12 @@ public class Account {
     }
 
     public void deposit(double amount) {
+        validateAmount(amount);
         addEntry(new AccountEntry(new Date(), amount, "deposit", "", ""));
     }
 
     public void withdraw(double amount) {
+        validateAmount(amount);
         addEntry(new AccountEntry(new Date(), -amount, "withdraw", "", ""));
     }
 
@@ -52,8 +54,23 @@ public class Account {
     }
 
     public void transferFunds(Account toAccount, double amount, String description) {
-        addEntry(new AccountEntry(new Date(), -amount, description, String.valueOf(toAccount.getAccountNumber()), toAccount.getCustomer().getName()));
-        toAccount.addEntry(new AccountEntry(new Date(), amount, description, String.valueOf(toAccount.getAccountNumber()), toAccount.getCustomer().getName()));
+        validateAmount(amount);
+        if (toAccount == null || customer == null || toAccount.getCustomer() == null) {
+            throw new IllegalArgumentException("Both accounts must have a customer before transferring funds");
+        }
+        Date transferredAt = new Date();
+        AccountEntry debit = new AccountEntry(transferredAt, -amount, description,
+                String.valueOf(toAccount.getAccountNumber()), toAccount.getCustomer().getName());
+        AccountEntry credit = new AccountEntry(transferredAt, amount, description,
+                String.valueOf(accountNumber), customer.getName());
+        addEntry(debit);
+        toAccount.addEntry(credit);
+    }
+
+    private static void validateAmount(double amount) {
+        if (!Double.isFinite(amount) || amount < 0) {
+            throw new IllegalArgumentException("Amount must be finite and non-negative");
+        }
     }
 
     public Customer getCustomer() {
@@ -86,3 +103,4 @@ public class Account {
         return Long.hashCode(accountNumber);
     }
 }
+

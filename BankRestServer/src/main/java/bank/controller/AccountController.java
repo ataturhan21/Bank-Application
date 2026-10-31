@@ -48,6 +48,9 @@ public class AccountController {
                                                        @RequestParam(value = "operation") String operation,
                                                        @RequestParam(value = "toAccountNumber", required = false) Long toAccountNumber,
                                                        @RequestParam(value = "description", required = false) String description) {
+        if (!Double.isFinite(amount) || amount < 0) {
+            return ResponseEntity.badRequest().build();
+        }
         switch (operation) {
             case "deposit":
                 accountService.deposit(accountNumber, amount);
@@ -62,11 +65,15 @@ public class AccountController {
                 accountService.withdrawEuros(accountNumber, amount);
                 break;
             case "transferFunds":
+                if (toAccountNumber == null) {
+                    return ResponseEntity.badRequest().build();
+                }
                 accountService.transferFunds(accountNumber, toAccountNumber, amount, description);
                 break;
             default:
-                throw new IllegalArgumentException("Invalid operation: " + operation);
+                return ResponseEntity.badRequest().build();
         }
         return new ResponseEntity<>(accountService.getAccount(accountNumber), HttpStatus.OK);
     }
 }
+
