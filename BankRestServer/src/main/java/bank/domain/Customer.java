@@ -1,6 +1,7 @@
 package bank.domain;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
@@ -48,7 +49,7 @@ public class Customer implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Customer)) return false;
         Customer customer = (Customer) o;
-        return id == customer.id && name.equals(customer.name);
+        return id == customer.id && Objects.equals(name, customer.name);
     }
 
     @Override

@@ -25,11 +25,11 @@ public class AccountEntryDTO {
     }
 
     public Date getDate() {
-        return new Date(date.getTime());
+        return date == null ? null : new Date(date.getTime());
     }
 
     public void setDate(Date date) {
-        this.date = new Date(date.getTime());
+        this.date = date == null ? null : new Date(date.getTime());
     }
 
     public double getAmount() {

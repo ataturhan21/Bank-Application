@@ -54,7 +54,7 @@ public class Application implements CommandLineRunner {
 
         try {
             bankGateway.withdrawEuros(1, 250);
-            accountInstruction = new AccountInstruction(1, "withdraw",250);
+            accountInstruction = new AccountInstruction(1, "withdrawEuros",250);
             sendKafkaMessage(accountInstruction);
         } catch (InsufficientFundsException e) {
             System.out.println(e.getMessage());
@@ -65,7 +65,7 @@ public class Application implements CommandLineRunner {
         sendKafkaMessage(accountInstruction);
 
         bankGateway.depositEuros(2, 300);
-        accountInstruction = new AccountInstruction(2, "deposit",300);
+        accountInstruction = new AccountInstruction(2, "depositEuros",300);
         sendKafkaMessage(accountInstruction);
 
         try {
