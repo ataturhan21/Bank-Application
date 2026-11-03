@@ -1,5 +1,7 @@
 # Bank Application
 
+[![Java tests](https://github.com/ataturhan21/Bank-Application/actions/workflows/java-tests.yml/badge.svg)](https://github.com/ataturhan21/Bank-Application/actions/workflows/java-tests.yml)
+
 A Java/Spring Boot learning project with a REST banking service and a command-line client. It demonstrates account operations, persistence, JMS notifications, Kafka publishing, and service-level logging.
 
 ## Modules
@@ -8,7 +10,7 @@ A Java/Spring Boot learning project with a REST banking service and a command-li
 | --- | --- |
 | [BankRestServer](BankRestServer/) | REST endpoints, account services, JPA persistence, and JMS integration |
 | [BankRestClient](BankRestClient/) | Calls the REST service and publishes account instructions to Kafka |
-| [AccountTest](BankRestServer/src/test/java/AccountTest.java) | Unit tests for the account domain model |
+| [Server tests](BankRestServer/src/test/java/) | Unit tests for the account domain model, DTOs and controller validation |
 
 Both modules use Spring Boot 2.6.5. The server targets Java 17; the client targets Java 11. Use JDK 17 to work with both projects.
 
@@ -38,7 +40,7 @@ mvn -f BankRestServer/pom.xml test
 mvn -f BankRestClient/pom.xml package
 ```
 
-Each module also includes Maven wrapper files. The commands above avoid relying on a particular shell's executable permissions.
+Each module also includes a Maven wrapper, so Maven does not need to be installed: run `./mvnw test` inside `BankRestServer` or `./mvnw package` inside `BankRestClient` (use `mvnw.cmd` on Windows).
 
 ## Run
 
@@ -62,7 +64,7 @@ The client automatically creates sample accounts, performs deposits/withdrawals/
 | POST | `/accounts/create` | Create an account using `accountNumber` and `customerName` query parameters |
 | POST | `/accounts/operation` | Run `deposit`, `depositEuros`, `withdraw`, `withdrawEuros`, or `transferFunds` |
 
-For operation parameters, see [AccountController.java](BankRestServer/src/main/java/bank/controller/AccountController.java). Runtime integration requires the external services above; no end-to-end execution is claimed by this documentation update.
+Unknown accounts (including a missing transfer destination) return `404 Not Found`; an invalid amount, an unknown operation or a transfer without `toAccountNumber` returns `400 Bad Request`. For operation parameters, see [AccountController.java](BankRestServer/src/main/java/bank/controller/AccountController.java). Runtime integration requires the external services above; no end-to-end execution is claimed by this documentation update.
 
 ## License
 
