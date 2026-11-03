@@ -1,6 +1,7 @@
 package bank.controller;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,9 @@ import bank.service.AccountService;
 @RequestMapping("/accounts")
 public class AccountController {
 
+    private static final Set<String> SUPPORTED_OPERATIONS =
+            Set.of("deposit", "depositEuros", "withdraw", "withdrawEuros", "transferFunds");
+
     @Autowired
     private AccountService accountService;
 
@@ -32,6 +36,9 @@ public class AccountController {
     @GetMapping("/{accountNumber}")
     public ResponseEntity<AccountDTO> getAccount(@PathVariable("accountNumber") long accountNumber) {
         AccountDTO accountDto = accountService.getAccount(accountNumber);
+        if (accountDto == null) {
+            return ResponseEntity.notFound().build();
+        }
         return new ResponseEntity<>(accountDto, HttpStatus.OK);
     }
 
@@ -48,8 +55,16 @@ public class AccountController {
                                                        @RequestParam(value = "operation") String operation,
                                                        @RequestParam(value = "toAccountNumber", required = false) Long toAccountNumber,
                                                        @RequestParam(value = "description", required = false) String description) {
-        if (!Double.isFinite(amount) || amount < 0) {
+        if (!Double.isFinite(amount) || amount < 0 || !SUPPORTED_OPERATIONS.contains(operation)) {
             return ResponseEntity.badRequest().build();
+        }
+        boolean transfer = "transferFunds".equals(operation);
+        if (transfer && toAccountNumber == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (accountService.getAccount(accountNumber) == null
+                || (transfer && accountService.getAccount(toAccountNumber) == null)) {
+            return ResponseEntity.notFound().build();
         }
         switch (operation) {
             case "deposit":
@@ -64,14 +79,9 @@ public class AccountController {
             case "withdrawEuros":
                 accountService.withdrawEuros(accountNumber, amount);
                 break;
-            case "transferFunds":
-                if (toAccountNumber == null) {
-                    return ResponseEntity.badRequest().build();
-                }
+            default:
                 accountService.transferFunds(accountNumber, toAccountNumber, amount, description);
                 break;
-            default:
-                return ResponseEntity.badRequest().build();
         }
         return new ResponseEntity<>(accountService.getAccount(accountNumber), HttpStatus.OK);
     }
