@@ -25,7 +25,7 @@ Start these services before running the demo:
 
 Review each module's `src/main/resources/application.properties` for your local service settings. The client REST URL is defined in [BankGateway.java](BankRestClient/src/main/java/client/BankGateway.java).
 
-This repository contains local learning defaults. The server uses `spring.jpa.hibernate.ddl-auto=create`, which recreates its schema on startup, and exposes actuator endpoints. Use an isolated development database and local services. It does not implement production banking authentication or account authorization.
+This repository contains local learning defaults. The server uses `spring.jpa.hibernate.ddl-auto=create`, which recreates its schema on startup, and exposes only the actuator `health` and `info` endpoints over HTTP (the `shutdown` endpoint stays disabled). Use an isolated development database and local services. It does not implement production banking authentication or account authorization.
 
 ## Build and test
 
