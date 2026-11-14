@@ -66,6 +66,6 @@ The client automatically creates sample accounts, performs deposits/withdrawals/
 
 Unknown accounts (including a missing transfer destination) return `404 Not Found`; an invalid amount, an unknown operation or a transfer without `toAccountNumber` returns `400 Bad Request`. For operation parameters, see [AccountController.java](BankRestServer/src/main/java/bank/controller/AccountController.java). Runtime integration requires the external services above; no end-to-end execution is claimed by this documentation update.
 
-## License
+## Copyright
 
-See [LICENSE](LICENSE).
+© Ata Turhan. All rights reserved. This repository has no open-source license: its code may not be copied, modified or redistributed.
